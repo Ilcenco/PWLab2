@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,8 +45,12 @@ namespace PWLab2
                 Thread.Sleep(2000);
                 // establish connection tcp
                 var term = command.Split("-u ")[1];
-                if (TcpRequest.MakeRequest(term))
+                if (TcpRequest.MakeRequest(term).Count != 0)
                 {
+                    foreach(HtmlNode node in TcpRequest.MakeRequest(term))
+                    {
+                        Console.WriteLine(node.ToString());
+                    }
                     Console.WriteLine("Connection established, oppening browser with results");
                 }
                 else

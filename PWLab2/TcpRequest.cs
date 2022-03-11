@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -9,7 +10,7 @@ namespace PWLab2
 {
     public static class TcpRequest
     {
-        public static bool MakeRequest(string adress)
+        public static List<HtmlNode> MakeRequest(string adress)
         {
             var list = new List<string>();
 
@@ -27,13 +28,23 @@ namespace PWLab2
                     writer.WriteLine();
                     var str = reader.ReadToEnd();
                     // Read the response from server
+                    var result = str;
+
                     if (str != null )
                     {
-                        return true;
+                        return ParseHtml(str) ;
                     }
-                    return false;
+                    return null;
                 }
             }
+        }
+        private static List<HtmlNode> ParseHtml(string html)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+            var programmerLinks = htmlDoc.DocumentNode.Descendants("div")
+                    .Where(node => node.GetAttributeValue("class", "").Contains("g")).Take(10).ToList();
+            return programmerLinks;
         }
     }
 }
